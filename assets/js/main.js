@@ -477,42 +477,49 @@ function closeModal(id) {
 
         // Real-time data updates simulation
         function startRealTimeUpdates() {
-            // Simulate real-time data changes
-            setInterval(() => {
-                // Update user count with random fluctuation
-                const userCount = document.getElementById('totalUsers');
-                const currentUsers = parseInt(userCount.textContent.replace(/,/g, ''));
-                const newUsers = currentUsers + Math.floor(Math.random() * 3);
-                userCount.textContent = newUsers.toLocaleString();
-                userCount.parentElement.classList.add('real-time-update');
-                
-                // Update order count
-                const orderCount = document.getElementById('totalOrders');
-                const currentOrders = parseInt(orderCount.textContent.replace(/,/g, ''));
-                const newOrders = currentOrders + Math.floor(Math.random() * 5);
-                orderCount.textContent = newOrders.toLocaleString();
-                orderCount.parentElement.classList.add('real-time-update');
-                
-                // Update revenue
-                const revenue = document.getElementById('totalRevenue');
-                const currentRevenue = parseFloat(revenue.textContent.replace(/[^\d.]/g, ''));
-                const newRevenue = currentRevenue + (Math.random() * 0.2);
-                revenue.textContent = '₫' + newRevenue.toFixed(1) + 'M';
-                revenue.parentElement.classList.add('real-time-update');
-                
-                // Remove animation class after it completes
-                setTimeout(() => {
-                    userCount.parentElement.classList.remove('real-time-update');
-                    orderCount.parentElement.classList.remove('real-time-update');
-                    revenue.parentElement.classList.remove('real-time-update');
-                }, 500);
-                
-                // Simulate new notifications
-                if (Math.random() > 0.7) {
-                    addRandomNotification();
-                }
-            }, 3000);
+    setInterval(() => {
+        // Update user count
+        const userCount = document.getElementById('totalUsers');
+        const currentUsers = parseInt(userCount.textContent.replace(/,/g, ''));
+        const newUsers = currentUsers + Math.floor(Math.random() * 3);
+        userCount.textContent = newUsers.toLocaleString();
+        userCount.parentElement.classList.add('real-time-update');
+
+        // Update restaurant count
+        const restaurantCount = document.getElementById('totalRestaurants');
+        const currentRestaurants = parseInt(restaurantCount.textContent.replace(/,/g, '')) || restaurants.length;
+        const newRestaurants = currentRestaurants + Math.floor(Math.random() * 2); // Tăng ngẫu nhiên 0-1
+        restaurantCount.textContent = newRestaurants.toLocaleString();
+        restaurantCount.parentElement.classList.add('real-time-update');
+
+        // Update order count
+        const orderCount = document.getElementById('totalOrders');
+        const currentOrders = parseInt(orderCount.textContent.replace(/,/g, ''));
+        const newOrders = currentOrders + Math.floor(Math.random() * 5);
+        orderCount.textContent = newOrders.toLocaleString();
+        orderCount.parentElement.classList.add('real-time-update');
+
+        // Update revenue
+        const revenue = document.getElementById('totalRevenue');
+        const currentRevenue = parseFloat(revenue.textContent.replace(/[^\d.]/g, ''));
+        const newRevenue = currentRevenue + (Math.random() * 0.2);
+        revenue.textContent = '₫' + newRevenue.toFixed(1) + 'M';
+        revenue.parentElement.classList.add('real-time-update');
+
+        // Remove animation class
+        setTimeout(() => {
+            userCount.parentElement.classList.remove('real-time-update');
+            restaurantCount.parentElement.classList.remove('real-time-update');
+            orderCount.parentElement.classList.remove('real-time-update');
+            revenue.parentElement.classList.remove('real-time-update');
+        }, 500);
+
+        // Simulate new notifications
+        if (Math.random() > 0.7) {
+            addRandomNotification();
         }
+    }, 3000);
+}
 
         function addRandomNotification() {
             const notifications = [
@@ -646,61 +653,147 @@ function closeModal(id) {
 
         // User menu dropdown (would need additional HTML/CSS)
         document.addEventListener('DOMContentLoaded', function() {
-            const userMenu = document.getElementById('userMenu');
-            const userDropdown = document.getElementById('userDropdown');
+    const userMenu = document.getElementById('userMenu');
+    const userDropdown = document.getElementById('userDropdown');
 
-            userMenu.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
-            });
+    // Toggle user dropdown
+    userMenu.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+    });
 
-            // Ẩn dropdown khi click ra ngoài
-            document.addEventListener('click', function() {
-                userDropdown.style.display = 'none';
-            });
-
-            userDropdown.addEventListener('click', function(e) {
-                e.stopPropagation(); // Không đóng khi click vào menu
-            });
-
-            // Xử lý các mục menu
-            document.getElementById('changePassword').onclick = function() {
-                alert('Chức năng Đổi mật khẩu!');
-            };
-            document.getElementById('viewAccount').onclick = function() {
-                alert('Chức năng Xem tài khoản!');
-            };
-            document.getElementById('logout').onclick = function() {
-                alert('Đăng xuất!');
-                // Thêm logic đăng xuất ở đây nếu cần
-            };
-        });
-
-        // Sample function to handle form submissions
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // In real app, this would send data to server
-                alert('Form submitted! In real app, this would save data.');
-                // Close modal if form is in modal
-                const modal = this.closest('.modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        });
-         // Modal functions
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'block';
-    }
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-    window.onclick = function(e) {
-        if (e.target.className === 'modal') {
-            e.target.style.display = 'none';
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!userMenu.contains(e.target) && !userDropdown.contains(e.target)) {
+            userDropdown.style.display = 'none';
         }
+    });
+
+    // Initialize admin data if not exists
+    if (!localStorage.getItem('admin_account')) {
+        localStorage.setItem('admin_account', JSON.stringify({
+            username: 'admin',
+            password: 'admin123',
+            email: 'admin@foodhub.com',
+            name: 'Quản trị viên',
+            lastLogin: null
+        }));
     }
+
+    // Logout functionality
+    document.getElementById('logout').onclick = function() {
+        if (confirm('Bạn chắc chắn muốn đăng xuất?')) {
+            localStorage.removeItem('adminLoggedIn');
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'flex';
+            alert('Đã đăng xuất thành công!');
+            console.log('User logged out');
+        }
+    };
+
+    // View account functionality
+    document.getElementById('viewAccount').onclick = function() {
+        const admin = JSON.parse(localStorage.getItem('admin_account'));
+        document.getElementById('viewAccountUsername').value = admin.username;
+        document.getElementById('viewAccountName').value = admin.name;
+        document.getElementById('viewAccountEmail').value = admin.email;
+        document.getElementById('viewAccountLastLogin').value = admin.lastLogin || 'Chưa có thông tin';
+        openModal('viewAccountModal');
+        console.log('Opened view account modal');
+    };
+
+    // Change password functionality
+    document.getElementById('changePassword').onclick = function() {
+        document.getElementById('changePasswordForm').reset();
+        openModal('changePasswordModal');
+        console.log('Opened change password modal');
+    };
+
+    // Handle change password form submission
+    document.getElementById('changePasswordForm').onsubmit = function(e) {
+        e.preventDefault();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const admin = JSON.parse(localStorage.getItem('admin_account'));
+
+        if (currentPassword !== admin.password) {
+            alert('Mật khẩu hiện tại không đúng!');
+            console.error('Incorrect current password');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            alert('Mật khẩu mới và xác nhận mật khẩu không khớp!');
+            console.error('Password confirmation mismatch');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            alert('Mật khẩu mới phải có ít nhất 6 ký tự!');
+            console.error('New password too short');
+            return;
+        }
+
+        admin.password = newPassword;
+        localStorage.setItem('admin_account', JSON.stringify(admin));
+        closeModal('changePasswordModal');
+        alert('Đổi mật khẩu thành công!');
+        console.log('Password changed successfully');
+    };
+});
+
+// Update login functionality to include last login tracking
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const admin = JSON.parse(localStorage.getItem('admin_account'));
+
+    if (username === admin.username && password === admin.password) {
+        admin.lastLogin = new Date().toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' });
+        localStorage.setItem('admin_account', JSON.stringify(admin));
+        localStorage.setItem('adminLoggedIn', 'true');
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        startRealTimeUpdates();
+        console.log('Login successful, last login updated:', admin.lastLogin);
+    } else {
+        alert('Tên đăng nhập hoặc mật khẩu không đúng!');
+        console.error('Login failed: incorrect credentials');
+    }
+});
+
+// Modal functions
+function openModal(modalId) {
+    try {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('show');
+            modal.style.display = 'flex';
+            console.log(`Opened modal: ${modalId}`);
+        } else {
+            console.error(`Modal with ID ${modalId} not found`);
+        }
+    } catch (error) {
+        console.error('Error opening modal:', error);
+    }
+}
+
+function closeModal(modalId) {
+    try {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+            console.log(`Closed modal: ${modalId}`);
+        }
+    } catch (error) {
+        console.error('Error closing modal:', error);
+    }
+}
     let orders = JSON.parse(localStorage.getItem('foodhub_orders')) || [
             {
                 id: 'ORD001',

@@ -12,6 +12,61 @@
 
 </head>
 <body>
+    <!-- Add these modals inside the #adminPanel div, after the existing modals -->
+<!-- View Account Modal -->
+<div class="modal" id="viewAccountModal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('viewAccountModal')">×</span>
+        <h3 class="modal-title">Thông tin tài khoản</h3>
+        <form>
+            <div class="form-group">
+                <label for="viewAccountUsername">Tên đăng nhập:</label>
+                <input type="text" id="viewAccountUsername" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewAccountName">Họ và tên:</label>
+                <input type="text" id="viewAccountName" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewAccountEmail">Email:</label>
+                <input type="email" id="viewAccountEmail" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label for="viewAccountLastLogin">Lần đăng nhập cuối:</label>
+                <input type="text" id="viewAccountLastLogin" class="form-control" readonly>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('viewAccountModal')">Đóng</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal" id="changePasswordModal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('changePasswordModal')">×</span>
+        <h3 class="modal-title">Đổi mật khẩu</h3>
+        <form id="changePasswordForm">
+            <div class="form-group">
+                <label for="currentPassword">Mật khẩu hiện tại:</label>
+                <input type="password" id="currentPassword" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="newPassword">Mật khẩu mới:</label>
+                <input type="password" id="newPassword" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Xác nhận mật khẩu mới:</label>
+                <input type="password" id="confirmPassword" class="form-control" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
     <!-- Login Form -->
     <div class="login-container" id="loginContainer">
         <div class="login-form">
