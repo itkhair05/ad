@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - 4Food Business</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+<body>
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-form">
+            <h2><i class="fas fa-user-shield"></i> Đăng nhập Admin</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-utensils"></i> 4Food</h3>
+                <span>Admin Panel</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="users">
+                        <i class="fas fa-users"></i> Quản lý User
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="restaurants">
+                        <i class="fas fa-store"></i> Quản lý Nhà hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="orders">
+                        <i class="fas fa-shopping-cart"></i> Quản lý Đơn hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="reviews">
+                        <i class="fas fa-star"></i> Quản lý Đánh giá
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="complaints">
+                        <i class="fas fa-exclamation-triangle"></i> Khiếu nại
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="promotions">
+                        <i class="fas fa-gift"></i> Khuyến mãi
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="reports">
+                        <i class="fas fa-chart-bar"></i> Báo cáo
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="menu-planning">
+                        <i class="fas fa-calendar-alt"></i> Lên thực đơn
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <button class="toggle-sidebar" id="toggleSidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">5</span>
+                    </button>
+                    <div class="user-menu" id="userMenu">
+                        <div class="user-avatar">A</div>
+                        <span>Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown" style="display: none;">
+                        <ul>
+                            <li id="changePassword">Đổi mật khẩu</li>
+                            <li id="viewAccount">Xem tài khoản</li>
+                            <li id="logout">Đăng xuất</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <div class="content-section active" id="dashboard">
+                    <div class="page-title">Tổng quan hệ thống</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-number" id="totalUsers">1,247</div>
+                            <div class="stat-label">Tổng người dùng</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="stat-number" id="totalRestaurants">89</div>
+                            <div class="stat-label">Nhà hàng đối tác</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="stat-number" id="totalOrders">3,456</div>
+                            <div class="stat-label">Đơn hàng hôm nay</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-number" id="totalRevenue">₫2.5M</div>
+                            <div class="stat-label">Doanh thu hôm nay</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Biểu đồ doanh thu 7 ngày qua</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container" id="revenueChart">
+                                <canvas id="revenueCanvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Đơn hàng gần đây</div>
+                            <button class="btn btn-primary">Xem tất cả</button>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn</th>
+                                        <th>Khách hàng</th>
+                                        <th>Nhà hàng</th>
+                                        <th>Giá trị</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thời gian</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentOrdersTable">
+                                    <tr>
+                                        <td>#ORD001</td>
+                                        <td>Nguyễn Văn A</td>
+                                        <td>Nhà hàng ABC</td>
+                                        <td>₫250,000</td>
+                                        <td><span class="status-badge status-active">Hoàn thành</span></td>
+                                        <td>5 phút trước</td>
+                                    </tr>
+                                    <tr>
+                                        <td>#ORD002</td>
+                                        <td>Trần Thị B</td>
+                                        <td>Quán cơm XYZ</td>
+                                        <td>₫180,000</td>
+                                        <td><span class="status-badge status-pending">Đang giao</span></td>
+                                        <td>10 phút trước</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Management Section -->
+                <div class="content-section" id="users">
+                    <div class="page-title">Quản lý người dùng</div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Danh sách người dùng</div>
+                            <button class="btn btn-primary" onclick="openModal('userModal')">
+                                <i class="fas fa-plus"></i> Thêm người dùng
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-box">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm người dùng...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên</th>
+                                        <th>Email</th>
+                                        <th>Vai trò</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>001</td>
+                                        <td>Nguyễn Văn A</td>
+                                        <td>nguyenvana@email.com</td>
+                                        <td>Khách hàng</td>
+                                        <td><span class="status-badge status-active">Hoạt động</span></td>
+                                        <td>15/06/2025</td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm">Sửa</button>
+                                            <button class="btn btn-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- User Modal -->
+<!-- User Modal -->
+<div class="modal" id="userModal" style="display: none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('userModal')">&times;</span>
+    <h2 class="modal-title">Thông tin người dùng</h2>
+
+    <form>
+      <input type="hidden" name="userId">
+
+      <div class="form-group">
+        <label for="name">Họ và tên</label>
+        <input type="text" id="name" placeholder="Nhập họ và tên" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Nhập địa chỉ email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Vai trò</label>
+        <select id="role" required>
+          <option value="Khách hàng">Khách hàng</option>
+          <option value="Nhà hàng">Nhà hàng</option>
+          <option value="Quản trị viên">Quản trị viên</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">Lưu thông tin</button>
+    </form>
+  </div>
+</div>
+
+
+                </div>
+
+                <!-- Restaurants Management Section -->
+                <div class="content-section" id="restaurants">
+                    <div class="page-title">Quản lý nhà hàng</div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Danh sách nhà hàng</div>
+                            <button class="btn btn-primary" onclick="openModal('restaurantModal')">
+                                <i class="fas fa-plus"></i> Thêm nhà hàng
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-box">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm nhà hàng..." oninput="renderRestaurantsTable(this.value)">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên nhà hàng</th>
+                                        <th>Chủ sở hữu</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Trạng thái</th>
+                                        <th>Đánh giá</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Sẽ được render bằng JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Restaurant Modal -->
+                    <div class="modal" id="restaurantModal" style="display: none;">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal('restaurantModal')">×</span>
+                            <h3 id="restaurantModalTitle">Thêm nhà hàng mới</h3>
+                            <form id="restaurantForm" onsubmit="saveRestaurant(event)">
+                                <input type="hidden" id="restaurantId">
+                                <div class="form-group">
+                                    <label for="restaurantName">Tên nhà hàng:</label>
+                                    <input type="text" id="restaurantName" class="form-control" placeholder="VD: Nhà hàng ABC" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="restaurantOwner">Chủ sở hữu:</label>
+                                    <input type="text" id="restaurantOwner" class="form-control" placeholder="VD: Lê Văn C" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="restaurantAddress">Địa chỉ:</label>
+                                    <input type="text" id="restaurantAddress" class="form-control" placeholder="VD: 123 Đường ABC, Q1, TP.HCM" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="restaurantRating">Đánh giá:</label>
+                                    <input type="text" id="restaurantRating" class="form-control" placeholder="VD: 4.5 ⭐" value="4.0 ⭐">
+                                </div>
+                                <div class="form-group">
+                                    <label for="restaurantPhone">Số điện thoại:</label>
+                                    <input type="tel" id="restaurantPhone" class="form-control" placeholder="VD: 0901234567" pattern="[0-9]{10}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="restaurantEmail">Email:</label>
+                                    <input type="email" id="restaurantEmail" class="form-control" placeholder="VD: nhahang@example.com">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Lưu</button>
+                                    <button type="button" class="btn btn-secondary" onclick="closeModal('restaurantModal')">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Approve Restaurant Modal -->
+                    <div class="modal" id="approveRestaurantModal" style="display: none;">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal('approveRestaurantModal')">×</span>
+                            <h3 class="modal-title">Duyệt tài khoản nhà hàng</h3>
+                            <form onsubmit="processRestaurantReview(event)">
+                                <input type="hidden" id="approveRestaurantId">
+                                <div class="form-group">
+                                    <label>Tên nhà hàng:</label>
+                                    <p id="approveRestaurantName"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Chủ sở hữu:</label>
+                                    <p id="approveRestaurantOwner"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Địa chỉ:</label>
+                                    <p id="approveRestaurantAddress"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Hành động:</label>
+                                    <select id="restaurantAction" class="form-control" required onchange="toggleRejectReason()">
+                                        <option value="">Chọn hành động</option>
+                                        <option value="approve">Duyệt</option>
+                                        <option value="reject">Từ chối</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="rejectReasonGroup" style="display: none;">
+                                    <label>Lý do từ chối:</label>
+                                    <textarea id="rejectReason" class="form-control" placeholder="Nhập lý do từ chối" rows="3"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                    <button type="button" class="btn btn-secondary" onclick="closeModal('approveRestaurantModal')">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Management Section -->
+<div class="content-section" id="orders">
+    <div class="page-title">Quản lý đơn hàng</div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number">45</div>
+            <div class="stat-label">Đang chờ xử lý</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <div class="stat-number">127</div>
+            <div class="stat-label">Đang giao hàng</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-number">892</div>
+            <div class="stat-label">Hoàn thành</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-number">12</div>
+            <div class="stat-label">Đã hủy</div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Danh sách đơn hàng</div>
+            <div>
+                <select class="form-control" id="orderStatusFilter" style="width: auto; display: inline-block; margin-right: 10px;" onchange="filterOrders()">
+                    <option value="all">Tất cả trạng thái</option>
+                    <option value="Chuẩn bị">Chuẩn bị</option>
+                    <option value="Đang giao">Đang giao</option>
+                    <option value="Hoàn thành">Hoàn thành</option>
+                    <option value="Đã hủy">Đã hủy</option>
+                </select>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="search-box">
+                <input type="text" class="form-control" id="orderSearch" placeholder="Tìm kiếm đơn hàng..." oninput="searchOrders()">
+                <i class="fas fa-search"></i>
+            </div>
+            <table class="table" id="orders-table">
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Nhà hàng</th>
+                        <th>Món ăn</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Thời gian</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                    <!-- Rows populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal" id="orderDetailModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('orderDetailModal')">×</button>
+            <h3>Chi tiết đơn hàng</h3>
+            <div id="orderDetailContent">
+                <form id="orderDetailForm" class="order-detail-form" onsubmit="processOrder(event)">
+                    <input type="hidden" id="orderId" />
+                    <div class="form-group">
+                        <label>Mã đơn:</label>
+                        <p id="detailOrderId"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Khách hàng:</label>
+                        <p id="detailCustomer"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Nhà hàng:</label>
+                        <p id="detailRestaurant"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Món ăn:</label>
+                        <p id="detailItems"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Tổng tiền:</label>
+                        <p id="detailTotal"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Thời gian:</label>
+                        <p id="detailTime"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Trạng thái hiện tại:</label>
+                        <p id="detailStatus"></p>
+                    </div>
+                    <div class="form-group" id="actionGroup">
+                        <label>Hành động:</label>
+                        <select id="orderAction" class="form-control" onchange="updateActionFields()">
+                            <option value="">Chọn hành động</option>
+                            <option value="process">Chuẩn bị</option>
+                            <option value="shipping">Đang giao</option>
+                            <option value="complete">Hoàn thành</option>
+                            <option value="cancel">Hủy</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="reasonGroup" style="display: none;">
+                        <label>Lý do (nếu hủy):</label>
+                        <textarea id="cancelReason" class="form-control" placeholder="Nhập lý do hủy (nếu có)" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-submit">Xác nhận</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('orderDetailModal')">Đóng</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+                </div>
+                <!-- Reviews Management Section -->
+<div class="content-section" id="reviews">
+    <div class="page-title">Quản lý đánh giá</div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Đánh giá cần kiểm duyệt</div>
+            <div>
+                <select class="form-control" id="reviewStatusFilter" onchange="filterReviews()" style="width: auto; display: inline-block;">
+                    <option value="all">Tất cả đánh giá</option>
+                    <option value="Chờ duyệt">Chờ duyệt</option>
+                    <option value="Đã duyệt">Đã duyệt</option>
+                    <option value="Đã từ chối">Đã từ chối</option>
+                </select>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table" id="reviews-table">
+                <thead>
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Nhà hàng</th>
+                        <th>Đánh giá</th>
+                        <th>Bình luận</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="reviews-table-body">
+                    <!-- Rows populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Process Review Modal -->
+    <div class="modal" id="processReviewModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('processReviewModal')">×</span>
+            <h3 class="modal-title">Xử lý đánh giá</h3>
+            <form onsubmit="processReview(event)" class="review-form">
+                <input type="hidden" id="processReviewId" />
+                <div class="form-group">
+                    <label>Khách hàng:</label>
+                    <p id="processReviewCustomer"></p>
+                </div>
+                <div class="form-group">
+                    <label>Nhà hàng:</label>
+                    <p id="processReviewRestaurant"></p>
+                </div>
+                <div class="form-group">
+                    <label>Đánh giá:</label>
+                    <p id="processReviewRating"></p>
+                </div>
+                <div class="form-group">
+                    <label>Bình luận:</label>
+                    <p id="processReviewComment"></p>
+                </div>
+                <div class="form-group">
+                    <label for="processReviewAction">Hành động:</label>
+                    <select id="processReviewAction" class="form-control" required>
+                        <option value="">Chọn hành động</option>
+                        <option value="Đã duyệt">Duyệt</option>
+                        <option value="Đã từ chối">Từ chối</option>
+                    </select>
+                </div>
+                <div class="form-group" id="rejectReasonGroup" style="display: none;">
+                    <label for="rejectReason">Lý do từ chối:</label>
+                    <textarea id="rejectReason" class="form-control" placeholder="Nhập lý do từ chối (nếu có)" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Xác nhận</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('processReviewModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+                <!-- Complaints Management Section -->
+<div class="content-section" id="complaints">
+    <div class="page-title">Quản lý khiếu nại</div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-number">23</div>
+            <div class="stat-label">Khiếu nại mới</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number">45</div>
+            <div class="stat-label">Đang xử lý</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-number">156</div>
+            <div class="stat-label">Đã giải quyết</div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Danh sách khiếu nại</div>
+        </div>
+        <div class="card-body">
+            <table class="table" id="complaints-table">
+                <thead>
+                    <tr>
+                        <th>Mã khiếu nại</th>
+                        <th>Người khiếu nại</th>
+                        <th>Loại</th>
+                        <th>Nội dung</th>
+                        <th>Mức độ</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="complaints-table-body">
+                    <!-- Rows populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Process Complaint Modal -->
+    <div class="modal" id="processComplaintModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('processComplaintModal')">×</span>
+            <h3 class="modal-title">Xử lý khiếu nại</h3>
+            <form onsubmit="processComplaint(event)" class="complaint-form">
+                <input type="hidden" id="processComplaintId" />
+                <div class="form-group">
+                    <label>Mã khiếu nại:</label>
+                    <p id="processComplaintCode"></p>
+                </div>
+                <div class="form-group">
+                    <label>Người khiếu nại:</label>
+                    <p id="processComplaintUser"></p>
+                </div>
+                <div class="form-group">
+                    <label for="processComplaintStatus">Trạng thái:</label>
+                    <select id="processComplaintStatus" class="form-control" required>
+                        <option value="Mới">Mới</option>
+                        <option value="Đang xử lý">Đang xử lý</option>
+                        <option value="Đã giải quyết">Đã giải quyết</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Cập nhật</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('processComplaintModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contact Complaint Modal -->
+    <div class="modal" id="contactComplaintModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('contactComplaintModal')">×</span>
+            <h3 class="modal-title">Liên hệ người khiếu nại</h3>
+            <form onsubmit="contactComplaint(event)" class="complaint-form">
+                <input type="hidden" id="contactComplaintId" />
+                <div class="form-group">
+                    <label>Người khiếu nại:</label>
+                    <p id="contactComplaintUser"></p>
+                </div>
+                <div class="form-group">
+                    <label for="contactNotes">Ghi chú liên hệ:</label>
+                    <textarea id="contactNotes" class="form-control" placeholder="Nhập ghi chú hoặc chi tiết liên hệ (VD: Gọi lại vào 14:00)" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Gửi</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('contactComplaintModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+                <!-- Promotions Management Section -->
+<div class="content-section" id="promotions">
+    <div class="page-title">Quản lý khuyến mãi</div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Chương trình khuyến mãi</div>
+            <button class="btn btn-primary" onclick="openModal('promotionModal')">
+                <i class="fas fa-plus"></i> Tạo khuyến mãi
+            </button>
+        </div>
+        <div class="card-body">
+            <table class="table" id="promotions-table">
+                <thead>
+                    <tr>
+                        <th>Mã KM</th>
+                        <th>Tên chương trình</th>
+                        <th>Loại</th>
+                        <th>Giá trị</th>
+                        <th>Thời gian</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="promotions-table-body">
+                    <!-- Rows populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create Promotion Modal -->
+    <div class="modal" id="promotionModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('promotionModal')">×</span>
+            <h3 class="modal-title">Tạo chương trình khuyến mãi mới</h3>
+            <form onsubmit="addPromotion(event)" class="promotion-form">
+                <div class="form-group">
+                    <label for="promoCode">Mã khuyến mãi:</label>
+                    <input type="text" id="promoCode" class="form-control" placeholder="VD: PROMO001" required />
+                </div>
+                <div class="form-group">
+                    <label for="promoName">Tên chương trình:</label>
+                    <input type="text" id="promoName" class="form-control" placeholder="VD: Giảm giá cuối tuần" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="promoType">Loại khuyến mãi:</label>
+                        <select id="promoType" class="form-control" required>
+                            <option value="">Chọn loại</option>
+                            <option value="Phần trăm">Phần trăm</option>
+                            <option value="Số tiền cố định">Số tiền cố định</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="promoValue">Giá trị:</label>
+                        <input type="text" id="promoValue" class="form-control" placeholder="VD: 20% hoặc ₫50,000" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="promoTime">Thời gian:</label>
+                    <input type="text" id="promoTime" class="form-control" placeholder="VD: 22-23/06/2025" required />
+                </div>
+                <div class="form-group">
+                    <label for="promoStatus">Trạng thái:</label>
+                    <select id="promoStatus" class="form-control" required>
+                        <option value="Đang chạy">Đang chạy</option>
+                        <option value="Sắp diễn ra">Sắp diễn ra</option>
+                        <option value="Đã dừng">Đã dừng</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Tạo khuyến mãi</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('promotionModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Promotion Modal -->
+    <div class="modal" id="editPromotionModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editPromotionModal')">×</span>
+            <h3 class="modal-title">Chỉnh sửa chương trình khuyến mãi</h3>
+            <form onsubmit="saveEditPromotion(event)" class="promotion-form">
+                <input type="hidden" id="editPromoIndex" />
+                <div class="form-group">
+                    <label for="editPromoCode">Mã khuyến mãi:</label>
+                    <input type="text" id="editPromoCode" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="editPromoName">Tên chương trình:</label>
+                    <input type="text" id="editPromoName" class="form-control" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPromoType">Loại khuyến mãi:</label>
+                        <select id="editPromoType" class="form-control" required>
+                            <option value="Phần trăm">Phần trăm</option>
+                            <option value="Số tiền cố định">Số tiền cố định</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPromoValue">Giá trị:</label>
+                        <input type="text" id="editPromoValue" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editPromoTime">Thời gian:</label>
+                    <input type="text" id="editPromoTime" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="editPromoStatus">Trạng thái:</label>
+                    <select id="editPromoStatus" class="form-control" required>
+                        <option value="Đang chạy">Đang chạy</option>
+                        <option value="Sắp diễn ra">Sắp diễn ra</option>
+                        <option value="Đã dừng">Đã dừng</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editPromotionModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stop Promotion Modal -->
+    <div class="modal" id="stopPromotionModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('stopPromotionModal')">×</span>
+            <h3 class="modal-title">Dừng chương trình khuyến mãi</h3>
+            <form onsubmit="stopPromotion(event)" class="promotion-form">
+                <input type="hidden" id="stopPromoIndex" />
+                <p>Bạn có chắc chắn muốn dừng chương trình khuyến mãi "<span id="stopPromoName"></span>"?</p>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">Dừng</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('stopPromotionModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Inside index.html, within the appropriate parent element (e.g., #adminPanel) -->
+<div class="content-section" id="reports">
+    <div class="page-title">Báo cáo tổng hợp</div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Tạo báo cáo</div>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="reportType">Loại báo cáo:</label>
+                    <select class="form-control" id="reportType">
+                        <option value="doanh-thu">Báo cáo doanh thu</option>
+                        <option value="don-hang">Báo cáo đơn hàng</option>
+                        <option value="nguoi-dung">Báo cáo người dùng</option>
+                        <option value="nha-hang">Báo cáo nhà hàng</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fromDate">Từ ngày:</label>
+                    <input type="date" class="form-control" id="fromDate">
+                </div>
+                <div class="form-group">
+                    <label for="toDate">Đến ngày:</label>
+                    <input type="date" class="form-control" id="toDate">
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="generateReportBtn">
+                    <i class="fas fa-chart-bar"></i> Tạo báo cáo
+                </button>
+                <button type="button" class="btn btn-success" id="exportExcelBtn">
+                    <i class="fas fa-file-excel"></i> Xuất Excel
+                </button>
+                <button type="button" class="btn btn-danger" id="exportPdfBtn">
+                    <i class="fas fa-file-pdf"></i> Xuất PDF
+                </button>
+            </div>
+            <div id="reportResult" style="margin-top: 20px;">
+                <table class="table" id="reportTable" style="display: none;">
+                    <thead id="reportTableHead"></thead>
+                    <tbody id="reportTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Biểu đồ doanh thu theo tháng</div>
+        </div>
+        <div class="card-body">
+            <div class="chart-container">
+                <canvas id="monthlyRevenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+                
+
+                <!-- Menu Planning Section -->
+<div class="content-section" id="menu-planning">
+    <div class="page-title">Lên thực đơn tuần/tháng</div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Kế hoạch thực đơn</div>
+            <button class="btn btn-primary" onclick="openModal('createMenuPlanModal')">
+                <i class="fas fa-plus"></i> Tạo kế hoạch
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Loại kế hoạch:</label>
+                    <select class="form-control" id="planTypeSelect" onchange="filterMenuPlans()">
+                        <option value="all">Tất cả</option>
+                        <option value="Thực đơn tuần">Thực đơn tuần</option>
+                        <option value="Thực đơn tháng">Thực đơn tháng</option>
+                        <option value="Thực đơn đặc biệt">Thực đơn đặc biệt</option>
+                    </select>
+                </div>
+            </div>
+            <table class="table" id="menu-planning">
+                <thead>
+                    <tr>
+                        <th>Kế hoạch</th>
+                        <th>Thời gian</th>
+                        <th>Số món</th>
+                        <th>Doanh nghiệp</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create Menu Plan Modal -->
+    <div class="modal" id="createMenuPlanModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('createMenuPlanModal')">×</span>
+            <h3 class="modal-title">Tạo kế hoạch thực đơn mới</h3>
+            <form onsubmit="addMenuPlan(event)" class="menu-plan-form">
+                <div class="form-group">
+                    <label for="createPlanType">Loại kế hoạch:</label>
+                    <select id="createPlanType" class="form-control" required>
+                        <option value="">Chọn loại kế hoạch</option>
+                        <option value="Thực đơn tuần">Thực đơn tuần</option>
+                        <option value="Thực đơn tháng">Thực đơn tháng</option>
+                        <option value="Thực đơn đặc biệt">Thực đơn đặc biệt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="planName">Tên kế hoạch:</label>
+                    <input type="text" id="planName" class="form-control" placeholder="Nhập tên kế hoạch (VD: Thực đơn tuần 25)" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="planTime">Thời gian:</label>
+                        <input type="text" id="planTime" class="form-control" placeholder="VD: 24-30/06/2025" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="planDishes">Số món:</label>
+                        <input type="number" id="planDishes" class="form-control" placeholder="VD: 25" min="1" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="planBusiness">Doanh nghiệp:</label>
+                    <input type="text" id="planBusiness" class="form-control" placeholder="Nhập tên doanh nghiệp hoặc nhóm" required />
+                </div>
+                <div class="form-group">
+                    <label for="planStatus">Trạng thái:</label>
+                    <select id="planStatus" class="form-control" required>
+    <option value="Đang chạy">Đang chạy</option>
+    <option value="Sắp diễn ra">Sắp diễn ra</option>
+    <option value="Hoàn thành">Hoàn thành</option>
+</select>
+
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Thêm kế hoạch</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('createMenuPlanModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Menu Plan Modal -->
+    <div class="modal" id="editMenuPlanModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editMenuPlanModal')">×</span>
+            <h3 class="modal-title">Chỉnh sửa kế hoạch thực đơn</h3>
+            <form onsubmit="saveEditPlan(event)" class="menu-plan-form">
+                <input type="hidden" id="editIndex" />
+                <div class="form-group">
+                    <label for="editPlanType">Loại kế hoạch:</label>
+                    <select id="editPlanType" class="form-control" required>
+                        <option value="Thực đơn tuần">Thực đơn tuần</option>
+                        <option value="Thực đơn tháng">Thực đơn tháng</option>
+                        <option value="Thực đơn đặc biệt">Thực đơn đặc biệt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editPlanName">Tên kế hoạch:</label>
+                    <input type="text" id="editPlanName" class="form-control" placeholder="Nhập tên kế hoạch" required />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPlanTime">Thời gian:</label>
+                        <input type="text" id="editPlanTime" class="form-control" placeholder="VD: 24-30/06/2025" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="editPlanDishes">Số món:</label>
+                        <input type="number" id="editPlanDishes" class="form-control" placeholder="VD: 25" min="1" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editPlanBusiness">Doanh nghiệp:</label>
+                    <input type="text" id="editPlanBusiness" class="form-control" placeholder="Nhập tên doanh nghiệp hoặc nhóm" required />
+                </div>
+                <div class="form-group">
+                    <label for="editPlanStatus">Trạng thái:</label>
+                    <select id="editPlanStatus" class="form-control" required>
+                        <option value="Đang chạy">Đang chạy</option>
+                        <option value="Sắp diễn ra">Sắp diễn ra</option>
+                         <option value="Hoàn thành">Hoàn thành</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-submit">Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editMenuPlanModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Menu Plan Modal -->
+    <div class="modal" id="viewMenuPlanModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('viewMenuPlanModal')">×</span>
+            <h3 class="modal-title">Chi tiết kế hoạch thực đơn</h3>
+            <div class="plan-details">
+                <p><strong>Tên kế hoạch:</strong> <span id="viewPlanName"></span></p>
+                <p><strong>Loại kế hoạch:</strong> <span id="viewPlanType"></span></p>
+                <p><strong>Thời gian:</strong> <span id="viewPlanTime"></span></p>
+                <p><strong>Số món:</strong> <span id="viewPlanDishes"></span></p>
+                <p><strong>Doanh nghiệp:</strong> <span id="viewPlanBusiness"></span></p>
+                <p><strong>Trạng thái:</strong> <span id="viewPlanStatus" class="status-badge"></span></p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('viewMenuPlanModal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+                </div>
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h4>Thông báo</h4>
+        </div>
+        <div class="notification-item unread">
+            <strong>Đơn hàng mới</strong>
+            <p>Có 3 đơn hàng mới cần xử lý</p>
+            <small>2 phút trước</small>
+        </div>
+        <div class="notification-item">
+            <strong>Khiếu nại</strong>
+            <p>Khách hàng khiếu nại về đơn #ORD123</p>
+            <small>10 phút trước</small>
+        </div>
+        <div class="notification-item">
+            <strong>Nhà hàng mới</strong>
+            <p>Quán Cơm ABC đã đăng ký tham gia</p>
+            <small>1 giờ trước</small>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('userModal')">&times;</button>
+            <h3>Thêm/Sửa người dùng</h3>
+            <form>
+                <div class="form-group">
+                    <label>Họ tên:</label>
+                    <input type="text" class="form-control" placeholder="Nhập họ tên">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" class="form-control" placeholder="Nhập email">
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại:</label>
+                    <input type="tel" class="form-control" placeholder="Nhập số điện thoại">
+                </div>
+                <div class="form-group">
+                    <label>Vai trò:</label>
+                    <select class="form-control">
+                        <option>Khách hàng</option>
+                        <option>Nhà hàng</option>
+                        <option>Shipper</option>
+                        <option>Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Promotion Modal -->
+    <div class="modal" id="promotionModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('promotionModal')">&times;</button>
+            <h3>Tạo chương trình khuyến mãi</h3>
+            <form>
+                <div class="form-group">
+                    <label>Tên chương trình:</label>
+                    <input type="text" class="form-control" placeholder="Nhập tên chương trình">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Loại khuyến mãi:</label>
+                        <select class="form-control">
+                            <option>Giảm theo phần trăm</option>
+                            <option>Giảm theo số tiền</option>
+                            <option>Mua 1 tặng 1</option>
+                            <option>Miễn phí giao hàng</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Giá trị:</label>
+                        <input type="number" class="form-control" placeholder="Nhập giá trị">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Từ ngày:</label>
+                        <input type="datetime-local" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Đến ngày:</label>
+                        <input type="datetime-local" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Mô tả:</label>
+                    <textarea class="form-control" rows="3" placeholder="Mô tả chi tiết chương trình"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Tạo khuyến mãi</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('promotionModal')">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+   <script src="assets/js/main.js"></script>
+</body>
+</html>
